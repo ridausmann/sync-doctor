@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Live working copies of the data; regenerated from data/seed/ on first run or "Reset demo data".
+data/*.json
