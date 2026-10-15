@@ -1,0 +1,14 @@
+[
+  {
+    "id": "op_bayside",
+    "name": "Bayside Car Rentals",
+    "contact_email": "ops@bayside-rentals.example",
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "op_harbor",
+    "name": "Harbor Light Rentals",
+    "contact_email": "hello@harborlight.example",
+    "timezone": "America/New_York"
+  }
+]

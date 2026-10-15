@@ -1,0 +1,68 @@
+[
+  {
+    "id": "V-101", "operator_id": "op_bayside", "name": "2022 Tesla Model 3", "plate": "8ABC123",
+    "turo_listing_id": "turo_lst_5501",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-15T09:00:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-102", "operator_id": "op_bayside", "name": "2021 Toyota RAV4", "plate": "7XYZ552",
+    "turo_listing_id": "turo_lst_5502",
+    "turo_connection": {"status": "disconnected", "last_sync": "2026-09-30T17:20:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-103", "operator_id": "op_bayside", "name": "2023 Honda Civic", "plate": "9CVC303",
+    "turo_listing_id": "turo_lst_5503",
+    "turo_connection": {"status": "expired", "last_sync": "2026-10-10T14:05:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-104", "operator_id": "op_bayside", "name": "2020 Jeep Wrangler", "plate": "6JPW404",
+    "turo_listing_id": "turo_lst_5504",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-15T10:45:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-105", "operator_id": "op_bayside", "name": "2022 Ford Mustang Convertible", "plate": "8MST505",
+    "turo_listing_id": "turo_lst_5505",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-12T08:00:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-106", "operator_id": "op_bayside", "name": "2021 BMW X3", "plate": "7BMW606",
+    "turo_listing_id": "turo_lst_5506",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-13T06:00:00Z"},
+    "resync_behavior": "partial", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-107", "operator_id": "op_bayside", "name": "2023 Kia Telluride", "plate": "9KIA707",
+    "turo_listing_id": "turo_lst_5507",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-11T22:30:00Z"},
+    "resync_behavior": "fails", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-108", "operator_id": "op_bayside", "name": "2022 Hyundai Ioniq 5", "plate": "8ION808",
+    "turo_listing_id": "turo_lst_5508",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-14T02:00:00Z"},
+    "resync_behavior": "turo_down", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-109", "operator_id": "op_bayside", "name": "2024 Toyota Camry", "plate": "9CAM909",
+    "turo_listing_id": "turo_lst_5509",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-15T11:30:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-110", "operator_id": "op_bayside", "name": "2021 Chevrolet Tahoe", "plate": "7THO110",
+    "turo_listing_id": "turo_lst_5510",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-12T20:00:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "V-201", "operator_id": "op_harbor", "name": "2022 Subaru Outback", "plate": "8SUB201",
+    "turo_listing_id": "turo_lst_5601",
+    "turo_connection": {"status": "connected", "last_sync": "2026-10-15T11:00:00Z"},
+    "resync_behavior": "works", "timezone": "America/Los_Angeles"
+  }
+]

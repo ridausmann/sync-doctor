@@ -1,0 +1,42 @@
+[
+  {
+    "id": "SD-1001", "status": "resolved", "priority": "normal",
+    "operator_id": "op_bayside", "vehicle_id": "V-110", "vehicle_name": "2021 Chevrolet Tahoe",
+    "reported_start": "2026-09-12", "reported_end": "2026-09-12",
+    "reason": "re-sync failed",
+    "summary": "Turo trip not blocking Sep 12; re-sync timed out.",
+    "operator_description": "", "checks": [], "attempted": [], "flags": [], "conflicts": [],
+    "created_at": "2026-09-10T16:00:00Z", "updated_at": "2026-09-11T09:00:00Z",
+    "history": [{"at": "2026-09-10T16:00:00Z", "event": "created", "note": "Created by Sync Doctor."}]
+  },
+  {
+    "id": "SD-1002", "status": "resolved", "priority": "normal",
+    "operator_id": "op_bayside", "vehicle_id": "V-110", "vehicle_name": "2021 Chevrolet Tahoe",
+    "reported_start": "2026-10-04", "reported_end": "2026-10-05",
+    "reason": "operator reports fix did not work",
+    "summary": "Auto re-sync ran but operator says Oct 4-5 still open.",
+    "operator_description": "Still showing open after the fix.", "checks": [], "attempted": [], "flags": [], "conflicts": [],
+    "created_at": "2026-10-03T18:30:00Z", "updated_at": "2026-10-04T10:00:00Z",
+    "history": [{"at": "2026-10-03T18:30:00Z", "event": "created", "note": "Created by Sync Doctor."}]
+  },
+  {
+    "id": "SD-1003", "status": "resolved", "priority": "normal",
+    "operator_id": "op_bayside", "vehicle_id": "V-110", "vehicle_name": "2021 Chevrolet Tahoe",
+    "reported_start": "2026-10-11", "reported_end": "2026-10-11",
+    "reason": "unexplained sync gap",
+    "summary": "Oct 11 trip did not block; sync looked healthy.",
+    "operator_description": "", "checks": [], "attempted": [], "flags": [], "conflicts": [],
+    "created_at": "2026-10-09T15:10:00Z", "updated_at": "2026-10-10T08:45:00Z",
+    "history": [{"at": "2026-10-09T15:10:00Z", "event": "created", "note": "Created by Sync Doctor."}]
+  },
+  {
+    "id": "SD-1004", "status": "open", "priority": "normal",
+    "operator_id": "op_bayside", "vehicle_id": "V-109", "vehicle_name": "2024 Toyota Camry",
+    "reported_start": "2026-10-26", "reported_end": "2026-10-26",
+    "reason": "unexplained sync gap",
+    "summary": "Booked Turo trip T-9083 (Oct 25 - Oct 27) is not blocking dates in 1Now.",
+    "operator_description": "The 26th still shows as available.", "checks": [], "attempted": [], "flags": [], "conflicts": [],
+    "created_at": "2026-10-14T19:00:00Z", "updated_at": "2026-10-14T19:00:00Z",
+    "history": [{"at": "2026-10-14T19:00:00Z", "event": "created", "note": "Created by Sync Doctor."}]
+  }
+]

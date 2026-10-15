@@ -1,0 +1,28 @@
+[
+  {"id": "T-9001", "vehicle_id": "V-101", "turo_listing_id": "turo_lst_5501", "start": "2026-10-18T10:00:00-07:00", "end": "2026-10-21T10:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9011", "vehicle_id": "V-102", "turo_listing_id": "turo_lst_5502", "start": "2026-10-22T09:00:00-07:00", "end": "2026-10-25T09:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9021", "vehicle_id": "V-103", "turo_listing_id": "turo_lst_5503", "start": "2026-10-17T12:00:00-07:00", "end": "2026-10-19T12:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9031", "vehicle_id": "V-104", "turo_listing_id": "turo_lst_5540", "start": "2026-10-24T08:00:00-07:00", "end": "2026-10-27T08:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9041", "vehicle_id": "V-105", "turo_listing_id": "turo_lst_5505", "start": "2026-10-19T10:00:00-07:00", "end": "2026-10-22T10:00:00-07:00", "status": "booked"},
+  {"id": "T-9042", "vehicle_id": "V-105", "turo_listing_id": "turo_lst_5505", "start": "2026-10-28T10:00:00-07:00", "end": "2026-10-30T10:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9051", "vehicle_id": "V-106", "turo_listing_id": "turo_lst_5506", "start": "2026-10-21T15:00:00-07:00", "end": "2026-10-24T15:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9061", "vehicle_id": "V-107", "turo_listing_id": "turo_lst_5507", "start": "2026-10-16T09:00:00-07:00", "end": "2026-10-18T09:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9071", "vehicle_id": "V-108", "turo_listing_id": "turo_lst_5508", "start": "2026-10-23T11:00:00-07:00", "end": "2026-10-26T11:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9081", "vehicle_id": "V-109", "turo_listing_id": "turo_lst_5509", "start": "2026-10-17T10:00:00-07:00", "end": "2026-10-19T10:00:00-07:00", "status": "booked"},
+  {"id": "T-9082", "vehicle_id": "V-109", "turo_listing_id": "turo_lst_5509", "start": "2026-10-21T10:00:00-07:00", "end": "2026-10-23T10:00:00-07:00", "status": "cancelled"},
+  {"id": "T-9083", "vehicle_id": "V-109", "turo_listing_id": "turo_lst_5509", "start": "2026-10-25T09:00:00-07:00", "end": "2026-10-27T09:00:00-07:00", "status": "booked"},
+  {"id": "T-9084", "vehicle_id": "V-109", "turo_listing_id": "turo_lst_5509", "start": "2026-10-29T10:00:00-07:00", "end": "2026-10-31T10:00:00-07:00", "status": "pending"},
+  {"id": "T-9085", "vehicle_id": "V-109", "turo_listing_id": "turo_lst_5509", "start": "2026-10-08T10:00:00-07:00", "end": "2026-10-10T10:00:00-07:00", "status": "completed"},
+
+  {"id": "T-9091", "vehicle_id": "V-110", "turo_listing_id": "turo_lst_5510", "start": "2026-10-20T08:00:00-07:00", "end": "2026-10-22T08:00:00-07:00", "status": "booked"},
+
+  {"id": "T-9201", "vehicle_id": "V-201", "turo_listing_id": "turo_lst_5601", "start": "2026-10-20T09:00:00-07:00", "end": "2026-10-23T09:00:00-07:00", "status": "booked"}
+]
