@@ -65,6 +65,8 @@ Open **http://127.0.0.1:5000**. Run the tests with:
 pytest
 ```
 
+If `pytest` isn't on your PATH (for example, the Windows Scripts folder isn't on PATH), use `python -m pytest`.
+
 The app uses a fixed simulated clock, `NOW = 2026-10-15T12:00:00Z` (`diagnostics.NOW`). Every
 diagnostic function takes `now=` so tests are deterministic.
 
