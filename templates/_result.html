@@ -1,0 +1,99 @@
+{# One vehicle's diagnosis. Expects `r` (a run dict) and `tickets` (id -> ticket). #}
+{% set tone = 'red' if r.outcome == 'ESCALATED' else ('amber' if r.outcome == 'OPERATOR_ACTION' else 'green') %}
+{% set ticket = tickets.get(r.ticket_id) if r.ticket_id else None %}
+<article class="card result" id="{{ r.id }}">
+  <div class="banner {{ tone }}">
+    <div class="banner-label">
+      {% if r.priority == 'urgent' %}URGENT · {% endif %}{{ OUTCOME_LABELS[r.outcome] }}
+      {% if 'repeat_failure' in r.flags %} · Recurring issue{% endif %}
+    </div>
+    <h2>{{ r.title }}</h2>
+    <div class="banner-meta">{{ r.vehicle_name }} · {{ r.plate }} · {{ r.vehicle_id }}{% if r.dates_label %} · {{ r.dates_label }}{% endif %}</div>
+  </div>
+
+  <p class="explanation">{{ r.explanation }}</p>
+
+  {% if r.conflicts %}
+    <table class="conflicts">
+      <thead><tr><th>Turo trip</th><th>Turo dates</th><th>1Now booking</th><th>1Now dates</th><th>Overlap</th></tr></thead>
+      <tbody>
+      {% for c in r.conflicts %}
+        <tr><td>{{ c.turo_trip_id }}</td><td>{{ c.turo_dates }}</td><td>{{ c.onenow_booking_id }}</td><td>{{ c.onenow_dates }}</td><td><strong>{{ c.overlap }}</strong></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if r.steps %}
+    <h3>What to do next</h3>
+    <ol class="steps">{% for s in r.steps %}<li>{{ s }}</li>{% endfor %}</ol>
+  {% endif %}
+
+  {% if ticket %}
+    <section class="ticket">
+      {% if r.duplicate %}
+        <p class="dup">You already have an open ticket for this car and these dates: <strong>{{ ticket.id }}</strong>
+           (status: <strong>{{ ticket.status|replace('_', ' ') }}</strong>). We didn't open a second one. Your request is already with the team.</p>
+      {% endif %}
+      <h3>Support ticket {{ ticket.id }}
+        <span class="badge {{ 'urgent' if ticket.priority == 'urgent' else 'normal' }}">{{ ticket.priority }}</span>
+        <span class="badge status">{{ ticket.status|replace('_', ' ') }}</span></h3>
+      <p class="next"><strong>What happens next:</strong> a support specialist will reply
+        {{ RESPONSE_TIMES[ticket.priority] }} by email. Everything below is attached, so you won't need to explain it again.</p>
+      <dl>
+        <dt>Summary</dt><dd>{{ ticket.summary }}</dd>
+        <dt>Reason</dt><dd>{{ ticket.reason }}</dd>
+        {% if ticket.reported_start %}<dt>Dates reported</dt><dd>{{ ticket.reported_start }}{% if ticket.reported_end != ticket.reported_start %} to {{ ticket.reported_end }}{% endif %}</dd>{% endif %}
+        {% if ticket.flags %}<dt>Flags</dt><dd>{{ ticket.flags|join(', ') }}</dd>{% endif %}
+        <dt>Already tried</dt>
+        <dd>{% if ticket.attempted %}<ul>{% for a in ticket.attempted %}<li>{{ a }}</li>{% endfor %}</ul>{% else %}Nothing automatic. Waiting on a specialist.{% endif %}</dd>
+        <dt>Your description</dt><dd>{{ ticket.operator_description or 'None given' }}</dd>
+        {% if ticket.checks %}
+          <dt>Checks attached</dt>
+          <dd><ul class="checks compact">{% for c in ticket.checks %}<li class="{{ c.status|replace('/', '') }}">{{ c.rule }}. {{ c.name }}: {{ c.status }}</li>{% endfor %}</ul></dd>
+        {% endif %}
+        {% if ticket.history|length > 1 %}
+          <dt>History</dt>
+          <dd><ul>{% for h in ticket.history %}<li>{{ h.at }}: {{ h.note }}</li>{% endfor %}</ul></dd>
+        {% endif %}
+      </dl>
+    </section>
+  {% endif %}
+
+  <details class="checked">
+    <summary>What we checked ({{ r.checks|selectattr('status', 'equalto', 'fail')|list|length }} issue(s) found)</summary>
+    <ol class="checks">
+      {% for c in r.checks %}
+        <li class="{{ c.status|replace('/', '') }}{% if c.context_only %} context{% endif %}">
+          <span class="mark">{{ {'pass': '✓', 'fail': '✗', 'n/a': '–', 'skipped': '–'}[c.status] }}</span>
+          <strong>{{ c.name }}</strong>: {{ c.detail }}
+          {% if c.context_only %}<span class="hint">(checked for context after the cause was found)</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </details>
+
+  {% if r.outcome in ['AUTO_FIXED', 'OPERATOR_ACTION', 'NO_ISSUE_FOUND'] %}
+    <section class="followup">
+      {% if not r.followup %}
+        <form method="post" action="{{ url_for('followup') }}">
+          <input type="hidden" name="run_id" value="{{ r.id }}">
+          <strong>{{ 'Did this answer your question?' if r.outcome == 'NO_ISSUE_FOUND' else 'Did this fix it?' }}</strong>
+          <button class="yes" name="answer" value="yes">Yes</button>
+          <button class="no" type="button" data-reveal="no-{{ r.id }}">No</button>
+          <div class="no-box" id="no-{{ r.id }}" hidden>
+            <label>Anything we should know? <span class="hint">(optional)</span>
+              <textarea name="note" rows="2" placeholder="e.g. I reconnected Turo but Oct 20 is still open."></textarea></label>
+            <button class="primary" name="answer" value="no">Send to support</button>
+          </div>
+        </form>
+      {% elif r.followup.answer == 'yes' %}
+        <p class="ok">Thanks. Glad that's sorted.</p>
+      {% else %}
+        <p class="esc">Thanks for letting us know. {% if r.followup.appended %}We've added this to ticket <strong>{{ r.followup.ticket_id }}</strong>.
+          {% else %}We've opened ticket <strong>{{ r.followup.ticket_id }}</strong>.{% endif %}
+          A specialist will reply {{ RESPONSE_TIMES['normal'] }}.</p>
+      {% endif %}
+    </section>
+  {% endif %}
+</article>

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('index') }}">← Run another check</a></p>
+
+{% if runs|length > 1 %}
+  <section class="card">
+    <h1>{{ operator.name }}: {{ runs|length }} vehicles checked</h1>
+    {% for key, items in groups %}
+      <h2 class="group-title">
+        {% if key == 'URGENT' %}<span class="badge urgent">Urgent</span>
+        {% else %}<span class="badge {{ key|lower }}">{{ OUTCOME_LABELS[key] }}</span>{% endif %}
+        <span class="count">{{ items|length }}</span>
+      </h2>
+      <table class="summary">
+        <thead><tr><th>Vehicle</th><th>What we found</th><th>Ticket</th><th></th></tr></thead>
+        <tbody>
+        {% for r in items %}
+          <tr>
+            <td>{{ r.vehicle_name }}<br><span class="hint">{{ r.vehicle_id }} · {{ r.plate }}</span></td>
+            <td>{{ r.title }}</td>
+            <td>{% if r.ticket_id %}{{ r.ticket_id }}{% if r.duplicate %} <span class="hint">(existing)</span>{% endif %}{% else %}None{% endif %}</td>
+            <td><a href="#{{ r.id }}">Details ↓</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  </section>
+{% endif %}
+
+{% for r in runs %}
+  {% include "_result.html" %}
+{% endfor %}
+{% endblock %}

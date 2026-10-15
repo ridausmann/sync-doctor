@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card intro">
+  <h1>Turo bookings not blocking dates?</h1>
+  <p>Sync Doctor checks your Turo connection, listing link, sync status and calendar. It fixes what it safely can.
+     If something needs you, it'll show you exactly what to do. If it needs us, it opens a support ticket with everything already filled in.</p>
+</section>
+
+{% if notice %}<div class="notice">{{ notice }}</div>{% endif %}
+{% if error %}<div class="error" role="alert"><strong>Let's fix that first:</strong> {{ error }}</div>{% endif %}
+
+<form method="post" action="{{ url_for('diagnose') }}" class="card form" id="diagnose-form">
+  <div class="row">
+    <label>Signed in as <span class="hint">(simulated login)</span>
+      <select name="operator_id" id="operator">
+        {% for o in operators %}
+          <option value="{{ o.id }}" {% if form.operator_id == o.id %}selected{% endif %}>{{ o.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Vehicle
+      <select name="vehicle_id" id="vehicle" data-selected="{{ form.vehicle_id or '' }}"></select>
+    </label>
+  </div>
+  <div class="row">
+    <label>A date you expected to be blocked <span class="hint">(optional)</span>
+      <input type="date" name="start" id="start" value="{{ form.start or '' }}">
+    </label>
+    <label>Until <span class="hint">(optional, for a range)</span>
+      <input type="date" name="end" id="end" value="{{ form.end or '' }}">
+    </label>
+  </div>
+  <label>What are you seeing? <span class="hint">(optional, goes on any ticket)</span>
+    <textarea name="description" rows="3" placeholder="e.g. Turo shows a trip on the 20th but 1Now still lets people book it.">{{ form.description or '' }}</textarea>
+  </label>
+  <button class="primary" type="submit">Diagnose</button>
+</form>
+
+<details class="card demo" open>
+  <summary>Demo scenarios <span class="hint">(click to fill the form, then press Diagnose)</span></summary>
+  <ul class="scenarios">
+    {% for op, vid, day, label in scenarios %}
+      <li><button type="button" class="link scenario" data-operator="{{ op }}" data-vehicle="{{ vid }}" data-date="{{ day }}">
+        <code>{{ vid }}</code>{% if day %} · {{ day[5:] }}{% endif %}</button> {{ label }}</li>
+    {% endfor %}
+  </ul>
+  <p class="hint">Fixes and tickets are saved. Use “Reset demo data” at the top to start over.</p>
+</details>
+
+<script id="fleet-data" type="application/json">{{ fleet | tojson }}</script>
+{% endblock %}

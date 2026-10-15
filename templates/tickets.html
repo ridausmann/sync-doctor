@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Support tickets{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Support tickets <span class="hint">(internal view of data/tickets.json)</span></h1>
+  <table class="summary">
+    <thead><tr><th>ID</th><th>Priority</th><th>Status</th><th>Vehicle</th><th>Dates</th><th>Reason</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for t in tickets %}
+      <tr>
+        <td><strong>{{ t.id }}</strong></td>
+        <td><span class="badge {{ 'urgent' if t.priority == 'urgent' else 'normal' }}">{{ t.priority }}</span></td>
+        <td>{{ t.status|replace('_', ' ') }}</td>
+        <td>{{ t.vehicle_name }}<br><span class="hint">{{ t.vehicle_id }}</span></td>
+        <td>{{ t.reported_start or 'n/a' }}{% if t.reported_end and t.reported_end != t.reported_start %} to {{ t.reported_end }}{% endif %}</td>
+        <td>{{ t.reason }}{% if t.flags %}<br><span class="hint">{{ t.flags|join(', ') }}</span>{% endif %}</td>
+        <td>{{ t.created_at }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7">No tickets yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
