@@ -1,25 +1,65 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Support tickets{% endblock %}
+{% block page_class %}page-narrow{% endblock %}
+
+{% block operator %}<span class="operator-chip">{{ icon('shield') }}Support view</span>{% endblock %}
+
 {% block content %}
-<section class="card">
-  <h1>Support tickets <span class="hint">(internal view of data/tickets.json)</span></h1>
-  <table class="summary">
-    <thead><tr><th>ID</th><th>Priority</th><th>Status</th><th>Vehicle</th><th>Dates</th><th>Reason</th><th>Created</th></tr></thead>
-    <tbody>
-    {% for t in tickets %}
-      <tr>
-        <td><strong>{{ t.id }}</strong></td>
-        <td><span class="badge {{ 'urgent' if t.priority == 'urgent' else 'normal' }}">{{ t.priority }}</span></td>
-        <td>{{ t.status|replace('_', ' ') }}</td>
-        <td>{{ t.vehicle_name }}<br><span class="hint">{{ t.vehicle_id }}</span></td>
-        <td>{{ t.reported_start or 'n/a' }}{% if t.reported_end and t.reported_end != t.reported_start %} to {{ t.reported_end }}{% endif %}</td>
-        <td>{{ t.reason }}{% if t.flags %}<br><span class="hint">{{ t.flags|join(', ') }}</span>{% endif %}</td>
-        <td>{{ t.created_at }}</td>
-      </tr>
-    {% else %}
-      <tr><td colspan="7">No tickets yet.</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
+<div class="fleet-head">
+  <div>
+    <span class="eyebrow">Internal view</span>
+    <h1>Support tickets</h1>
+    <p class="muted">Every ticket Sync Doctor has opened (from <code>data/tickets.json</code>). Click a row to see the details.</p>
+  </div>
+  {% if tickets %}<span class="pill pill-quiet">{{ tickets|length }} total · {{ tickets|selectattr('status', 'in', ['open', 'in_progress'])|list|length }} open</span>{% endif %}
+</div>
+
+<section class="card table-wrap">
+  {% if tickets %}
+    <table class="ticket-table">
+      <thead>
+        <tr><th scope="col">Ticket</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Vehicle</th><th scope="col">Reason</th><th scope="col">Created</th></tr>
+      </thead>
+      <tbody>
+      {% for t in tickets %}
+        <tr class="ticket-row" data-toggle="detail-{{ t.id }}">
+          <td><button class="row-toggle" type="button" aria-expanded="false" aria-controls="detail-{{ t.id }}">{{ t.id }}{{ icon('chevron-down', 'chev') }}</button></td>
+          <td>{% if t.priority == 'urgent' %}<span class="pill pill-urgent">Urgent</span>{% else %}<span class="pill pill-quiet">Normal</span>{% endif %}</td>
+          <td data-label="Status"><span class="status-chip status-{{ t.status }}">{{ t.status|replace('_', ' ') }}</span></td>
+          <td data-label="Vehicle">{{ t.vehicle_name }}<span class="cell-sub mono">{{ t.vehicle_id }}{% if t.reported_start %} · {{ t.reported_start[5:] }}{% if t.reported_end and t.reported_end != t.reported_start %} to {{ t.reported_end[5:] }}{% endif %}{% endif %}</span></td>
+          <td data-label="Reason">{{ t.reason }}</td>
+          <td data-label="Created"><span class="mono">{{ t.created_at[:10] }}</span><span class="cell-sub">{{ t.created_at[11:16] }} UTC</span></td>
+        </tr>
+        <tr class="ticket-detail" id="detail-{{ t.id }}" hidden>
+          <td colspan="6">
+            <div class="ticket-detail-inner">
+              <dl class="kv">
+                <dt>Summary</dt><dd>{{ t.summary }}</dd>
+                {% if t.operator_name %}<dt>Operator</dt><dd>{{ t.operator_name }}</dd>{% endif %}
+                <dt>Dates reported</dt><dd>{{ t.reported_start or 'Not given' }}{% if t.reported_end and t.reported_end != t.reported_start %} to {{ t.reported_end }}{% endif %}</dd>
+                {% if t.flags %}<dt>Flags</dt><dd>{% for f in t.flags %}<span class="pill pill-quiet">{{ f|replace('_', ' ') }}</span> {% endfor %}</dd>{% endif %}
+                <dt>Already tried</dt><dd>{% if t.attempted %}<ul>{% for a in t.attempted %}<li>{{ a }}</li>{% endfor %}</ul>{% else %}Nothing automatic{% endif %}</dd>
+                <dt>Operator says</dt><dd>{{ t.operator_description or 'Nothing added' }}</dd>
+                {% if t.checks %}
+                  <dt>Checks</dt>
+                  <dd><ul>{% for c in t.checks %}<li>{{ c.rule }}. {{ c.name }}: <strong>{{ c.status }}</strong>. {{ c.detail }}</li>{% endfor %}</ul></dd>
+                {% endif %}
+                <dt>History</dt><dd><ul>{% for h in t.history %}<li><span class="mono muted">{{ h.at[:16]|replace('T', ' ') }}</span> {{ h.note }}</li>{% endfor %}</ul></dd>
+              </dl>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty">
+      <div class="empty-icon">{{ icon('inbox') }}</div>
+      <h2>No tickets yet</h2>
+      <p class="muted">When Sync Doctor can't fix something on its own, the ticket it opens will show up here, with every check already attached.</p>
+      <a class="btn btn-primary" href="{{ url_for('index') }}">{{ icon('sync') }} Run a check</a>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

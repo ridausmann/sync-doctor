@@ -1,35 +1,85 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Results{% endblock %}
+{% block page_class %}page-narrow{% endblock %}
+
+{% block operator %}
+  <span class="operator-chip" title="Signed-in operator (simulated)">{{ icon('cars') }}{{ operator.name }}</span>
+{% endblock %}
+
 {% block content %}
-<p><a href="{{ url_for('index') }}">← Run another check</a></p>
+{% set tone_of = {'ESCALATED': 'red', 'OPERATOR_ACTION': 'amber', 'AUTO_FIXED': 'green', 'NO_ISSUE_FOUND': 'green'} %}
+
+<div class="results-top">
+  <a class="back-link" href="{{ url_for('index') }}">{{ icon('arrow-right') }} Back to home</a>
+  {% if runs|length > 1 %}<span class="muted" style="font-size:.85rem">Checked {{ runs[0].created_at[:10] }} at {{ runs[0].created_at[11:16] }} UTC</span>{% endif %}
+</div>
 
 {% if runs|length > 1 %}
-  <section class="card">
-    <h1>{{ operator.name }}: {{ runs|length }} vehicles checked</h1>
-    {% for key, items in groups %}
-      <h2 class="group-title">
-        {% if key == 'URGENT' %}<span class="badge urgent">Urgent</span>
-        {% else %}<span class="badge {{ key|lower }}">{{ OUTCOME_LABELS[key] }}</span>{% endif %}
-        <span class="count">{{ items|length }}</span>
-      </h2>
-      <table class="summary">
-        <thead><tr><th>Vehicle</th><th>What we found</th><th>Ticket</th><th></th></tr></thead>
-        <tbody>
-        {% for r in items %}
-          <tr>
-            <td>{{ r.vehicle_name }}<br><span class="hint">{{ r.vehicle_id }} · {{ r.plate }}</span></td>
-            <td>{{ r.title }}</td>
-            <td>{% if r.ticket_id %}{{ r.ticket_id }}{% if r.duplicate %} <span class="hint">(existing)</span>{% endif %}{% else %}None{% endif %}</td>
-            <td><a href="#{{ r.id }}">Details ↓</a></td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% endfor %}
+  {# ---------------- Fleet view: grouped, sortable, expandable rows ---------------- #}
+  <section aria-labelledby="fleet-title" id="fleet">
+    <div class="fleet-head">
+      <div>
+        <span class="eyebrow">Fleet check</span>
+        <h1 id="fleet-title">{{ operator.name }}: {{ runs|length }} vehicles checked</h1>
+        <div class="fleet-stats" aria-live="polite">
+          {% for key, items in groups %}
+            {% if key == 'URGENT' %}<span class="pill pill-urgent"><span class="pulse-dot"></span>{{ items|length }} Urgent</span>
+            {% else %}<span class="pill pill-{{ tone_of[key] }}">{{ items|length }} · {{ OUTCOME_LABELS[key] }}</span>{% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <label class="sort-control">
+        <span class="label-caps">Sort by</span>
+        <select class="select-compact" id="fleet-sort">
+          <option value="severity">Severity (grouped)</option>
+          <option value="name">Vehicle name</option>
+          <option value="id">Vehicle ID</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="fleet-groups">
+      {% for key, items in groups %}
+        {% set gtone = 'red' if key == 'URGENT' else tone_of[key] %}
+        <section class="fleet-group" data-group="{{ key }}">
+          <div class="group-head {% if key == 'URGENT' %}is-urgent{% endif %}">
+            {% if key == 'URGENT' %}{{ icon('octagon') }}{% else %}<span class="group-dot" style="--tone: var(--{{ gtone }})"></span>{% endif %}
+            <h2>{% if key == 'URGENT' %}Urgent: double bookings{% else %}{{ OUTCOME_LABELS[key] }}{% endif %}</h2>
+            <span class="group-count" aria-label="{{ items|length }} vehicles">{{ items|length }}</span>
+          </div>
+          <div class="fleet-rows">
+            {% for r in items %}
+              <details class="fleet-row tone-{{ tone_of[r.outcome] }}" id="row-{{ r.id }}"
+                       data-name="{{ r.vehicle_name }}" data-vid="{{ r.vehicle_id }}">
+                <summary>
+                  <span class="fleet-vehicle"><strong>{{ r.vehicle_name }}</strong><span class="muted">{{ r.vehicle_id }} · {{ r.plate }}</span></span>
+                  <span class="fleet-title">{{ r.title }}</span>
+                  <span class="fleet-ticket">
+                    {% if r.ticket_id %}<span class="pill pill-mono">{{ icon('ticket') }}{{ r.ticket_id }}</span>{% if r.duplicate %}<span class="muted">existing</span>{% endif %}
+                    {% else %}<span class="muted">No ticket</span>{% endif %}
+                  </span>
+                  {{ icon('chevron-down', 'chev') }}
+                </summary>
+                <div class="fleet-body">
+                  {% set compact = true %}
+                  {% include "_result.html" %}
+                </div>
+              </details>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+    </div>
+    <div class="fleet-rows fleet-flat" id="fleet-flat" hidden></div>
   </section>
+{% else %}
+  {% set compact = false %}
+  {% for r in runs %}{% include "_result.html" %}{% endfor %}
 {% endif %}
 
-{% for r in runs %}
-  {% include "_result.html" %}
-{% endfor %}
+<div class="result-actions">
+  <a class="btn btn-primary" href="{{ url_for('index') }}">{{ icon('sync') }} Run another check</a>
+  <a class="btn btn-secondary" href="{{ url_for('tickets') }}">{{ icon('ticket') }} View support tickets</a>
+</div>
 {% endblock %}

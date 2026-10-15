@@ -1,27 +1,50 @@
-<!doctype html>
+{% from "_icons.html" import icon %}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Sync Doctor{% endblock %} · 1Now</title>
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}Diagnose{% endblock %} · Sync Doctor · 1Now</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700;750&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <a class="sr-only" href="#main">Skip to content</a>
   <header class="topbar">
-    <a class="brand" href="{{ url_for('index') }}"><span class="logo">1Now</span> Sync Doctor</a>
-    <nav>
-      <a href="{{ url_for('index') }}">Diagnose</a>
-      <a href="{{ url_for('tickets') }}">Support tickets</a>
-      <form method="post" action="{{ url_for('reset') }}" class="inline"
-            onsubmit="return confirm('Reset all demo data (tickets, syncs, runs)?')">
-        <button class="link">Reset demo data</button>
-      </form>
-    </nav>
+    <div class="topbar-inner">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Sync Doctor home">
+        <span class="brand-mark">{{ icon('sync') }}</span>
+        <span class="brand-text">
+          <span class="brand-name">Sync Doctor</span>
+          <span class="brand-tagline">Turo calendar sync, diagnosed in seconds</span>
+        </span>
+      </a>
+      <nav class="topnav" aria-label="Main">
+        <a href="{{ url_for('index') }}" {% if request.endpoint in ['index', 'results'] %}aria-current="page"{% endif %}>Diagnose</a>
+        <a href="{{ url_for('tickets') }}" {% if request.endpoint == 'tickets' %}aria-current="page"{% endif %}>Tickets</a>
+      </nav>
+      <div class="topbar-actions">
+        {% block operator %}{% endblock %}
+        <form method="post" action="{{ url_for('reset') }}"
+              onsubmit="return confirm('Reset all demo data? Tickets, syncs and past runs go back to the starting state.')">
+          <button class="btn btn-ghost btn-reset" type="submit" title="Restore the original demo data" aria-label="Reset demo data">
+            {{ icon('reset') }}<span class="btn-reset-label">Reset demo data</span>
+          </button>
+        </form>
+      </div>
+    </div>
   </header>
-  <main>
+
+  <main id="main" class="page {% block page_class %}{% endblock %}">
     {% block content %}{% endblock %}
   </main>
-  <footer>Prototype. All Turo and 1Now data is mocked. Simulated time: {{ now.strftime('%b %d, %Y %H:%M') }} UTC.</footer>
+
+  <footer class="footer">
+    <p>Sync Doctor is a 1Now prototype. All Turo and 1Now data is mocked, and the clock is fixed at
+       {{ now.strftime('%b %d, %Y %H:%M') }} UTC so results are repeatable.</p>
+  </footer>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

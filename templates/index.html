@@ -1,51 +1,105 @@
 {% extends "base.html" %}
-{% block content %}
-<section class="card intro">
-  <h1>Turo bookings not blocking dates?</h1>
-  <p>Sync Doctor checks your Turo connection, listing link, sync status and calendar. It fixes what it safely can.
-     If something needs you, it'll show you exactly what to do. If it needs us, it opens a support ticket with everything already filled in.</p>
-</section>
+{% from "_icons.html" import icon %}
 
-{% if notice %}<div class="notice">{{ notice }}</div>{% endif %}
-{% if error %}<div class="error" role="alert"><strong>Let's fix that first:</strong> {{ error }}</div>{% endif %}
-
-<form method="post" action="{{ url_for('diagnose') }}" class="card form" id="diagnose-form">
-  <div class="row">
-    <label>Signed in as <span class="hint">(simulated login)</span>
-      <select name="operator_id" id="operator">
-        {% for o in operators %}
-          <option value="{{ o.id }}" {% if form.operator_id == o.id %}selected{% endif %}>{{ o.name }}</option>
-        {% endfor %}
-      </select>
-    </label>
-    <label>Vehicle
-      <select name="vehicle_id" id="vehicle" data-selected="{{ form.vehicle_id or '' }}"></select>
-    </label>
-  </div>
-  <div class="row">
-    <label>A date you expected to be blocked <span class="hint">(optional)</span>
-      <input type="date" name="start" id="start" value="{{ form.start or '' }}">
-    </label>
-    <label>Until <span class="hint">(optional, for a range)</span>
-      <input type="date" name="end" id="end" value="{{ form.end or '' }}">
-    </label>
-  </div>
-  <label>What are you seeing? <span class="hint">(optional, goes on any ticket)</span>
-    <textarea name="description" rows="3" placeholder="e.g. Turo shows a trip on the 20th but 1Now still lets people book it.">{{ form.description or '' }}</textarea>
+{% block operator %}
+  {# Lives in the top bar but submits with the diagnose form via the form= attribute. #}
+  <label class="operator-switch">
+    <span class="label-caps">Signed in as</span>
+    <select class="select-compact" name="operator_id" id="operator" form="diagnose-form" aria-label="Signed-in operator (simulated login)">
+      {% for o in operators %}
+        <option value="{{ o.id }}" {% if form.operator_id == o.id %}selected{% endif %}>{{ o.name }}</option>
+      {% endfor %}
+    </select>
   </label>
-  <button class="primary" type="submit">Diagnose</button>
-</form>
+{% endblock %}
 
-<details class="card demo" open>
-  <summary>Demo scenarios <span class="hint">(click to fill the form, then press Diagnose)</span></summary>
-  <ul class="scenarios">
-    {% for op, vid, day, label in scenarios %}
-      <li><button type="button" class="link scenario" data-operator="{{ op }}" data-vehicle="{{ vid }}" data-date="{{ day }}">
-        <code>{{ vid }}</code>{% if day %} · {{ day[5:] }}{% endif %}</button> {{ label }}</li>
-    {% endfor %}
-  </ul>
-  <p class="hint">Fixes and tickets are saved. Use “Reset demo data” at the top to start over.</p>
-</details>
+{% block content %}
+<div class="home">
+  <section aria-labelledby="intro-title">
+    <header class="intro">
+      <span class="eyebrow">Self-serve diagnostic</span>
+      <h1 id="intro-title">Turo bookings not blocking dates?</h1>
+      <p>We'll check your Turo connection, listing link, sync and calendar in order. Anything we can safely fix,
+         we fix. If something needs you, you'll get exact steps. If it needs us, we'll open a ticket with everything already filled in.</p>
+    </header>
+
+    <div class="stack">
+      {% if notice %}
+        <div class="alert alert-success" role="status">{{ icon('check-circle') }}<div><span class="alert-title">{{ notice }}</span>
+          <div class="help">Tickets, syncs and past runs are back to the starting state.</div></div></div>
+      {% endif %}
+      {% if error %}
+        <div class="alert alert-error" role="alert">{{ icon('info') }}<div><span class="alert-title">Let's fix that first</span>
+          <div>{{ error }}</div></div></div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('diagnose') }}" class="card card-accent form-card" id="diagnose-form" novalidate>
+        <fieldset>
+          <div class="field-head">
+            <legend class="field-label">Which car?</legend>
+            <p class="help">Pick one car, or check your whole fleet at once.</p>
+          </div>
+          <div class="vehicle-list" id="vehicle-list" role="radiogroup" aria-label="Vehicle"
+               data-selected="{{ form.vehicle_id or '' }}"></div>
+          <noscript><p class="help">Turn on JavaScript to choose a vehicle.</p></noscript>
+        </fieldset>
+
+        <div class="field-row">
+          <label class="field-label" for="start">Date you expected to be blocked <span class="optional">(optional)</span>
+            <input class="input" type="date" name="start" id="start" value="{{ form.start or '' }}" aria-describedby="date-help">
+          </label>
+          <label class="field-label" for="end">Until <span class="optional">(optional)</span>
+            <input class="input" type="date" name="end" id="end" value="{{ form.end or '' }}" aria-describedby="date-help">
+          </label>
+        </div>
+        <p class="help" id="date-help" style="margin-top: var(--space-2)">Leave the dates blank to check every upcoming Turo trip. Add "Until" to check a range.</p>
+
+        <label class="field-label" for="description">What are you seeing? <span class="optional">(optional)</span>
+          <textarea class="input" name="description" id="description" rows="3"
+                    placeholder="e.g. Turo shows a trip on the 20th, but 1Now still lets people book it.">{{ form.description or '' }}</textarea>
+          <span class="help">If we need to open a ticket, we'll add this to it so you don't have to repeat yourself.</span>
+        </label>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit" id="diagnose-btn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Diagnose</span>
+          <span class="btn-icon">{{ icon('arrow-right') }}</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <aside class="card scenarios-card" aria-labelledby="scenarios-title">
+    <div class="card-head">
+      <h2 id="scenarios-title" style="font-size:1rem">Demo scenarios</h2>
+      <p class="help">Click a scenario to fill the form, then press Diagnose.</p>
+    </div>
+    <ul class="scenario-list">
+      {% for op, vid, day, label in scenarios %}
+        {% set parts = label.split('→') %}
+        {% set low = label|lower %}
+        {% if 'urgent' in low %}{% set tag = ('red', 'Urgent') %}
+        {% elif 'duplicate' in low %}{% set tag = ('amber', 'Existing') %}
+        {% elif 'escalate' in low or 'ticket' in low %}{% set tag = ('red', 'Escalate') %}
+        {% elif 'auto-fixed' in low %}{% set tag = ('green', 'Auto-fix') %}
+        {% elif 'no issue' in low %}{% set tag = ('green', 'No issue') %}
+        {% elif 'steps' in low or 'time zone' in low %}{% set tag = ('amber', 'Action') %}
+        {% else %}{% set tag = ('quiet', 'Fleet') %}{% endif %}
+        <li>
+          <button type="button" class="scenario" data-operator="{{ op }}" data-vehicle="{{ vid }}" data-date="{{ day }}">
+            <span class="pill pill-{{ tag[0] }} scenario-tag">{{ tag[1] }}</span>
+            <span class="scenario-text">
+              <span class="scenario-title"><code>{{ 'All vehicles' if vid == 'all' else vid }}</code>{% if day %} · {{ day[5:7]|int }}/{{ day[8:]|int }}{% endif %}{% if op == 'op_harbor' %} · Harbor Light{% endif %}</span>
+              <span class="scenario-desc">{{ parts[0]|trim }}{% if parts|length > 1 %}: {{ parts[1]|trim }}{% endif %}</span>
+            </span>
+            {{ icon('arrow-right', 'scenario-arrow') }}
+          </button>
+        </li>
+      {% endfor %}
+    </ul>
+    <p class="scenarios-foot">Fixes and tickets are saved between runs. Use <strong>Reset demo data</strong> in the top bar to start fresh.</p>
+  </aside>
+</div>
 
 <script id="fleet-data" type="application/json">{{ fleet | tojson }}</script>
 {% endblock %}
