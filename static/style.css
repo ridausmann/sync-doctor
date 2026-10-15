@@ -316,6 +316,10 @@ code, .mono { font-family: var(--font-mono); font-size: .9em; }
 .help { font-size: .84rem; color: var(--text-subtle); margin-top: 2px; }
 .field-head { margin-bottom: var(--space-2); }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+/* Labels can wrap to different heights; keep the inputs on one baseline. */
+.field-row .field-label { display: flex; flex-direction: column; }
+.field-row .input { margin-top: auto; }
+.field-row .field-label > span { margin-bottom: var(--space-2); }
 
 .input {
   display: block; width: 100%; margin-top: var(--space-2);
