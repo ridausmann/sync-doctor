@@ -123,7 +123,7 @@ class Check:
     rule: int
     key: str
     name: str
-    status: str             # "pass" | "fail" | "n/a" | "skipped"
+    status: str             # "pass" | "fail" | "fixed" | "n/a" | "skipped"
     detail: str
     context_only: bool = False  # ran after the outcome was already decided
 
@@ -417,7 +417,7 @@ def rule_staleness(ctx: Ctx, active: bool):
     ctx.attempted.append("Re-sync with Turo: succeeded")
     ctx.attempted.append("Verify: all booked Turo trips are now blocking dates")
     blocked = ", ".join(fmt_range(_d(b["start"]), _d(b["end"])) for b in ctx.blocks) or "none"
-    check = Check(4, "staleness", name, "pass",
+    check = Check(4, "staleness", name, "fixed",
                   f"Last sync was {ago}. Re-synced and verified. Blocked now: {blocked}.")
     return check, Verdict(
         outcome=AUTO_FIXED, reason="stale sync",
@@ -709,7 +709,7 @@ def diagnose_vehicle(db: dict, operator: dict, vehicle: dict, start: date | None
             ticket = create_ticket(
                 db, operator=operator, vehicle=vehicle, start=start, end=end,
                 priority=result["priority"], reason=result["reason"],
-                summary=f"{vehicle['name']} ({vehicle['id']}): {result['title']}",
+                summary=f"{vehicle['id']} · {result['title']}",
                 checks=result["checks"], attempted=result["attempted"], description=description,
                 flags=result["flags"], conflicts=result["conflicts"], now=now, run_id=result["id"],
             )
@@ -763,7 +763,7 @@ def handle_followup(db: dict, run_id: str, fixed: bool, note: str = "", now: dat
         ticket = create_ticket(
             db, operator=operator, vehicle=vehicle, start=start, end=end, priority="normal",
             reason="operator reports fix did not work",
-            summary=f"{vehicle['name']} ({vehicle['id']}): {run['title']}. Operator says it's still not fixed.",
+            summary=f"{vehicle['id']} · {run['title']}. Operator says it's still not fixed.",
             checks=run["checks"], attempted=run["attempted"] + [f"Operator followed: {s}" for s in run["steps"]],
             description="\n".join(x for x in [run["description"], note] if x),
             flags=run["flags"] + ["operator_followup_no"], conflicts=run["conflicts"], now=now, run_id=run["id"],

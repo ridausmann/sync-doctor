@@ -83,7 +83,8 @@ th { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-s
 .checks { padding-left: 0; list-style: none; }
 .checks li { padding: 4px 0; font-size: .9rem; }
 .checks .mark { display: inline-block; width: 18px; font-weight: 700; }
-.checks .pass .mark { color: var(--green); }
+.checks .pass .mark, .checks .fixed .mark { color: var(--green); }
+.checks .fixed strong::after { content: " (fixed)"; color: var(--green); font-weight: 600; }
 .checks .fail .mark { color: var(--red); }
 .checks li.na, .checks li.skipped, .checks li.context { color: var(--muted); }
 .checks.compact li { padding: 0; }
@@ -95,3 +96,9 @@ th { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-s
 .no-box label { display: block; font-weight: 600; margin-bottom: 8px; }
 .ok { color: var(--green); }
 .esc { color: var(--red); }
+
+/* Keep columns aligned across the per-outcome tables. */
+table.summary { table-layout: fixed; }
+.summary th:nth-child(1) { width: 30%; }
+.summary th:nth-child(3) { width: 16%; }
+.summary th:nth-child(4) { width: 12%; }

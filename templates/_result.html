@@ -61,11 +61,13 @@
   {% endif %}
 
   <details class="checked">
-    <summary>What we checked ({{ r.checks|selectattr('status', 'equalto', 'fail')|list|length }} issue(s) found)</summary>
+    {% set n_fail = r.checks|selectattr('status', 'equalto', 'fail')|list|length %}
+    {% set n_fixed = r.checks|selectattr('status', 'equalto', 'fixed')|list|length %}
+    <summary>What we checked ({{ r.checks|length }} checks · {{ n_fail }} problem{{ '' if n_fail == 1 else 's' }} found{% if n_fixed %} · {{ n_fixed }} fixed{% endif %})</summary>
     <ol class="checks">
       {% for c in r.checks %}
         <li class="{{ c.status|replace('/', '') }}{% if c.context_only %} context{% endif %}">
-          <span class="mark">{{ {'pass': '✓', 'fail': '✗', 'n/a': '–', 'skipped': '–'}[c.status] }}</span>
+          <span class="mark">{{ {'pass': '✓', 'fail': '✗', 'fixed': '✓', 'n/a': '–', 'skipped': '–'}[c.status] }}</span>
           <strong>{{ c.name }}</strong>: {{ c.detail }}
           {% if c.context_only %}<span class="hint">(checked for context after the cause was found)</span>{% endif %}
         </li>

@@ -92,6 +92,7 @@ def test_stale_sync_resync_works_is_auto_fixed_and_verified(db):
     assert v["turo_connection"]["last_sync"] == "2026-10-15T12:00:00Z"
     assert {"start": "2026-10-19", "end": "2026-10-22", "source_trip_id": "T-9041"} in db["blocked_dates"]["V-105"]
     assert any(a.startswith("Verify:") for a in r["attempted"])
+    assert check(r, "staleness")["status"] == "fixed"
     assert r["ticket_id"] is None
 
 
